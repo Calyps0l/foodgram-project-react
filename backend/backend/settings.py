@@ -18,6 +18,8 @@ INSTALLED_APPS = [
     'foodgram.apps.FoodgramConfig',
     'users.apps.UsersConfig',
     'api.apps.ApiConfig',
+    'rest_framework',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
