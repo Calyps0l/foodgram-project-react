@@ -1,8 +1,15 @@
 import os
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-SECRET_KEY = 'asce%pq@05f4=#jc&e%+2g$!qe%z&0_&9f-nn@mpu&or(ksu4+'
+SECRET_KEY = os.getenv(
+    'SECRET_KEY',
+    default='asce%pq@05f4=#jc&e%+2g$!qe%z&0_&9f-nn@mpu&or(ksu4+'
+)
 
 DEBUG = True
 
@@ -31,6 +38,20 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly'
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication'
+    ],
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend'
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'api.pagination.PagePagination',
+    'PAGE_SIZE': 6,
+}
 
 ROOT_URLCONF = 'backend.urls'
 
@@ -78,7 +99,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTH_USER_MODEL = 'users.User'
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru-ru'
 
 TIME_ZONE = 'UTC'
 
