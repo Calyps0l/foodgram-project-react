@@ -1,13 +1,12 @@
+from django.conf.urls import url
 from django.urls import include, path
+from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
+from rest_framework import permissions
 from rest_framework.routers import DefaultRouter
 
-from rest_framework import permissions
-from drf_yasg.views import get_schema_view
-from drf_yasg import openapi
-from django.conf.urls import url
-
-from .views import (IngredientViewSet, RecipeViewSet,
-                    TagViewSet, CustomUserViewSet)
+from .views import (CustomUserViewSet, IngredientViewSet, RecipeViewSet,
+                    TagViewSet)
 
 app_name = 'api'
 
