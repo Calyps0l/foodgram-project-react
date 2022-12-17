@@ -143,4 +143,14 @@ class RecipeViewSet(viewsets.ModelViewSet):
         response['Content-Disposition'] = f'attachment; filename={file}'
         return response
 
-
+    @action(detail=False,
+            methods=['GET'],
+            url_path='download_shopping_cart',
+            permission_classes=(IsAuthenticated,))
+    def download(self, request):
+        ingredients = IngredientInRecipe.objects.filter(
+            recipes__shopping_cart_recipe__user=request.user
+        ).order_by('ingredient__name').values(
+            'ingredient__name', 'ingredient__measurement_unit'
+        ).annotate(ingredient_total=Sum('amount'))
+        return self.report(ingredients)
