@@ -1,23 +1,23 @@
 from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from rest_framework import serializers
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
 from foodgram.models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
                              ShoppingCart, Tag)
-from rest_framework import status, viewsets, filters
+from rest_framework import filters, serializers, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from users.models import Subscribe, User
+
 from .filters import IngredientFilter, RecipeFilter
-from .permissions import AuthorOrReadOnly
-from .serializers import (CustomUserSerializer,
-                          SubscribeSerializer, TagSerializer,
-                          FavoriteSerializer, IngredientSerializer,
-                          RecipeReadSerializer, RecipeWriteSerializer)
 from .pagination import PagePagination
+from .permissions import AuthorOrReadOnly
+from .serializers import (CustomUserSerializer, FavoriteSerializer,
+                          IngredientSerializer, RecipeReadSerializer,
+                          RecipeWriteSerializer, SubscribeSerializer,
+                          TagSerializer)
 
 
 class TagViewSet(viewsets.ModelViewSet):
