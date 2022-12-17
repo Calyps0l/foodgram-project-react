@@ -1,8 +1,9 @@
-from drf_base64.fields import Base64ImageField
 from django.shortcuts import get_object_or_404
+from drf_base64.fields import Base64ImageField
+from foodgram.models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
+                             ShoppingCart, Tag)
 from rest_framework import serializers
-from foodgram.models import Ingredient, IngredientInRecipe, Recipe, Tag, Favorite, ShoppingCart
-from users.models import User, Subscribe
+from users.models import Subscribe, User
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
