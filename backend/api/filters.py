@@ -3,6 +3,9 @@ from foodgram.models import Ingredient, Recipe
 
 
 class IngredientFilter(filters.FilterSet):
+    """
+    Класс для фильтрации списка ингредиентов.
+    """
     name = filters.CharFilter(
         field_name='name',
         lookup_expr='istartswith')
@@ -13,6 +16,11 @@ class IngredientFilter(filters.FilterSet):
 
 
 class RecipeFilter(filters.FilterSet):
+    """
+    Класс для фильтрации списка
+    рецептов по тэгам, нахождению
+    в корзине и избранных рецептах.
+    """
     tags = filters.AllValuesMultipleFilter(field_name='tags__slug')
     is_in_shopping_cart = filters.BooleanFilter(
         field_name='is_in_shopping_cart',

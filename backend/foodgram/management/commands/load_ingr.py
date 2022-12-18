@@ -5,6 +5,10 @@ from foodgram.models import Ingredient
 
 
 class Command(BaseCommand):
+    """
+    Загружаем ингредиенты из файла JSON.
+    """
+
     def handle(self, *args, **options):
         with open('data/ingredients.json', encoding='utf-8') as file:
             data = json.loads(file.read())

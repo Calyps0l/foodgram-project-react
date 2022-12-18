@@ -3,8 +3,8 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
-from foodgram.models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
-                             ShoppingCart, Tag)
+from foodgram.models import (Favorite, Ingredient, IngredientInRecipe,
+                             Recipe, ShoppingCart, Tag)
 from rest_framework import filters, serializers, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -21,12 +21,18 @@ from .serializers import (CustomUserSerializer, FavoriteSerializer,
 
 
 class TagViewSet(viewsets.ModelViewSet):
+    """
+    Вьюсет для отображения тэгов.
+    """
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     pagination_class = None
 
 
 class IngredientViewSet(viewsets.ModelViewSet):
+    """
+    Вьюсет для отображения ингредиентов.
+    """
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)
@@ -36,6 +42,9 @@ class IngredientViewSet(viewsets.ModelViewSet):
 
 
 class CustomUserViewSet(UserViewSet):
+    """
+    Вьюсет для отображения пользователей.
+    """
     queryset = User.objects.all()
     serializer_class = CustomUserSerializer
 
@@ -77,6 +86,9 @@ class CustomUserViewSet(UserViewSet):
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
+    """
+    Вьюсет для отображения рецептов.
+    """
     queryset = Recipe.objects.all().order_by('-id')
     permission_classes = (AuthorOrReadOnly,)
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)

@@ -8,7 +8,7 @@ User = get_user_model()
 
 class Tag(models.Model):
     """
-    Добавление новых тэгов.
+    Модель добавления тэгов.
     """
     name = models.CharField(
         max_length=50,
@@ -38,7 +38,7 @@ class Tag(models.Model):
 
 class Ingredient(models.Model):
     """
-    Добавление новых ингредиентов.
+    Модель добавления ингредиентов.
     """
     name = models.CharField(
         max_length=200,
@@ -62,7 +62,7 @@ class Ingredient(models.Model):
 
 class IngredientInRecipe(models.Model):
     """
-    Добавление новых ингредиентов в рецепт.
+    Модель добавления ингредиентов в рецепт.
     """
     ingredient = models.ForeignKey(
         Ingredient,
@@ -96,7 +96,7 @@ class IngredientInRecipe(models.Model):
 
 class Recipe(models.Model):
     """
-    Добавление новых рецептов.
+    Модель добавления новых рецептов.
     """
     author = models.ForeignKey(
         User,
@@ -156,7 +156,7 @@ class Recipe(models.Model):
 
 class Favorite(models.Model):
     """
-    Добавление рецепта в избранное.
+    Модель добавления рецепта в избранное.
     """
     user = models.ForeignKey(
         User,
@@ -185,7 +185,7 @@ class Favorite(models.Model):
 
 class ShoppingCart(models.Model):
     """
-    Добавление рецепта в избранное.
+    Модель добавления рецепта в корзину покупок.
     """
     user = models.ForeignKey(
         User,

@@ -5,6 +5,10 @@ from foodgram.models import Tag
 
 
 class Command(BaseCommand):
+    """
+    Загружаем тэги из файла JSON.
+    """
+
     def handle(self, *args, **options):
         with open('data/tag.json', encoding='utf-8') as file:
             data = json.loads(file.read())

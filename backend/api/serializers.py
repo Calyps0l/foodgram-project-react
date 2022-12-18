@@ -7,6 +7,9 @@ from users.models import Subscribe, User
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор модели пользователя.
+    """
     is_subscribed = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
@@ -23,18 +26,27 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
 
 class IngredientSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор модели игредиентов.
+    """
     class Meta:
         model = Ingredient
         fields = ('id', 'name', 'measurement_unit')
 
 
 class TagSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор модели тэгов.
+    """
     class Meta:
         model = Tag
         fields = ('id', 'name', 'color', 'slug',)
 
 
 class SubscribeSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор модели подписок.
+    """
     email = serializers.ReadOnlyField(source='author.email')
     id = serializers.ReadOnlyField(source='author.id')
     username = serializers.ReadOnlyField(source='author.username')
@@ -68,6 +80,9 @@ class SubscribeSerializer(serializers.ModelSerializer):
 
 
 class SubscribeRecipeSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор полей избранных рецептов.
+    """
     image = Base64ImageField(max_length=None)
 
     class Meta:
@@ -76,6 +91,9 @@ class SubscribeRecipeSerializer(serializers.ModelSerializer):
 
 
 class IngredientInRecipeSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор связи ингредиентов и рецептов.
+    """
     id = serializers.IntegerField()
     name = serializers.SerializerMethodField()
     measurement_unit = serializers.SerializerMethodField()
@@ -95,6 +113,9 @@ class IngredientInRecipeSerializer(serializers.ModelSerializer):
 
 
 class RecipeReadSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор просмотра рецептов.
+    """
     tags = TagSerializer(many=True, read_only=True)
     author = CustomUserSerializer(read_only=True)
     ingredients = IngredientInRecipeSerializer(many=True)
@@ -127,6 +148,9 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 
 
 class RecipeWriteSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор создания рецептов.
+    """
     author = CustomUserSerializer(read_only=True, required=False)
     ingredients = IngredientInRecipeSerializer(many=True)
     tags = serializers.PrimaryKeyRelatedField(
@@ -208,6 +232,9 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
 
 
 class ShoppingCartSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор корзины покупок.
+    """
     id = serializers.CharField(read_only=True, source='recipe.id')
     name = serializers.CharField(read_only=True, source='recipe.name')
     image = serializers.CharField(read_only=True, source='recipe.image')
@@ -221,6 +248,9 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор избранных рецепртов.
+    """
     id = serializers.CharField(read_only=True, source='recipe.id')
     name = serializers.CharField(read_only=True, source='recipe.name')
     image = serializers.CharField(read_only=True, source='recipe.image')
@@ -247,5 +277,3 @@ class FavoriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Favorite
         fields = ('id', 'name', 'image', 'cooking_time')
-
-
