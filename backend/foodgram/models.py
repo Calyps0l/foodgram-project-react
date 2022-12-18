@@ -80,7 +80,7 @@ class IngredientInRecipe(models.Model):
 
     class Meta:
         verbose_name = 'Количество ингредиентов'
-        verbose_name_plural = 'Количества ингредиентов'
+        verbose_name_plural = 'Количество ингредиентов'
         ordering = ('id',)
         constraints = [
             models.UniqueConstraint(
