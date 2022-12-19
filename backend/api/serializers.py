@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.shortcuts import get_object_or_404
 from drf_base64.fields import Base64ImageField
 from foodgram.models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
@@ -21,8 +22,8 @@ class CustomUserSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         if self.context.get('request').user.is_anonymous:
             return False
-        user = request.user
-        return Subscribe.objects.filter(user=user, author=obj).exists()
+        return Subscribe.objects.filter(
+            user=request.user, author=obj).exists()
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -203,9 +204,10 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
                 Ingredient.objects.filter(id=ingredient['id'])[:1])
             ing_recipe, _ = IngredientInRecipe.objects.get_or_create(
                 ingredient=current,
-                amount=ingredient['amount'],)
+                amount=ingredient['amount'], )
             recipe.ingredients.add(ing_recipe.id)
 
+    @transaction.atomic
     def create(self, validated_data):
         tags = validated_data.pop('tags')
         ingredients = validated_data.pop('ingredients')
@@ -214,6 +216,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         self.create_ingredients(ingredients, recipe)
         return recipe
 
+    @transaction.atomic
     def update(self, recipe, validated_data):
         if 'ingredients' in validated_data:
             ingredients = validated_data.pop('ingredients')
@@ -268,11 +271,6 @@ class FavoriteSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 detail='Нельзя добавить свои рецепты в избранное')
         return data
-
-    def create(self, validated_data):
-        favorite = Favorite.objects.create(**validated_data)
-        favorite.save()
-        return favorite
 
     class Meta:
         model = Favorite

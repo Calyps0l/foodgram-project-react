@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
+from .utils import create_shopping_cart
 from foodgram.models import (Favorite, Ingredient, IngredientInRecipe,
                              Recipe, ShoppingCart, Tag)
 from rest_framework import filters, serializers, status, viewsets
@@ -70,19 +71,17 @@ class CustomUserViewSet(UserViewSet):
             if request.user.id == author.id:
                 raise serializers.ValidationError(
                     detail='Нельзя подписаться на самого себя')
-            else:
-                serializer = SubscribeSerializer(
-                    Subscribe.objects.create(user=request.user, author=author),
-                    context={'request': request})
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-        elif request.method == 'DELETE':
+            serializer = SubscribeSerializer(
+                Subscribe.objects.create(user=request.user, author=author),
+                context={'request': request},)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        if request.method == 'DELETE':
             if Subscribe.objects.filter(user=request.user, author=author).exists():
                 Subscribe.objects.filter(
-                    user=request.user,
-                    author=author).delete()
-                return Response(status=status.HTTP_204_NO_CONTENT)
-            else:
-                return Response(status=status.HTTP_400_BAD_REQUEST)
+                    user=request.user, author=author).delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -129,8 +128,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def favorite(self, request, pk=None):
         if request.method == 'POST':
             return self.add_recipe(Favorite, request.user, pk)
-        else:
-            return self.delete_recipe(Favorite, request.user, pk)
+        return self.delete_recipe(Favorite, request.user, pk)
 
     @action(detail=True,
             methods=['POST', 'DELETE'],
@@ -139,30 +137,16 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def shopping_cart(self, request, pk=None):
         if request.method == 'POST':
             return self.add_recipe(ShoppingCart, request.user, pk)
-        else:
-            return self.delete_recipe(ShoppingCart, request.user, pk)
-
-    @staticmethod
-    def report(ingredients):
-        shopping = 'Необходимо приобрести:'
-        for ingredient in ingredients:
-            shopping += (
-                f"{ingredient['ingredient__name']} - "
-                f"{ingredient['ingredient_total']} "
-                f"({ingredient['ingredient__measurement_unit']}) \n")
-        file = 'shopping.txt'
-        response = HttpResponse(shopping, content_type='text/plain')
-        response['Content-Disposition'] = f'attachment; filename={file}'
-        return response
+        return self.delete_recipe(ShoppingCart, request.user, pk)
 
     @action(detail=False,
             methods=['GET'],
             url_path='download_shopping_cart',
             permission_classes=(IsAuthenticated,))
-    def download(self, request):
+    def download_shopping_cart(self, request):
         ingredients = IngredientInRecipe.objects.filter(
             recipes__shopping_cart_recipe__user=request.user
         ).order_by('ingredient__name').values(
             'ingredient__name', 'ingredient__measurement_unit'
         ).annotate(ingredient_total=Sum('amount'))
-        return self.report(ingredients)
+        return create_shopping_cart(ingredients)

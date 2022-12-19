@@ -24,15 +24,18 @@ class RecipeFilter(filters.FilterSet):
     tags = filters.AllValuesMultipleFilter(field_name='tags__slug')
     is_in_shopping_cart = filters.BooleanFilter(
         field_name='is_in_shopping_cart',
-        method='filter')
+        method='filter_is_in_shopping_cart')
     is_favorited = filters.BooleanFilter(
         field_name='is_favorited',
-        method='filter')
+        method='filter_is_favorited')
 
-    def filter(self, queryset, name, value):
+    def filter_is_favorited(self, queryset, name, value):
         if name == 'is_favorited' and value:
             queryset = queryset.filter(
                 favorite_recipe__user=self.request.user)
+        return queryset
+
+    def filter_is_in_shopping_cart(self, queryset, name, value):
         if name == 'is_in_shopping_cart' and value:
             queryset = queryset.filter(
                 shopping_cart_recipe__user=self.request.user)
