@@ -19,6 +19,7 @@ services:
       - db
     env_file:
       - .env
+    container_name: foodgram_backend
 
   frontend:
     image: calyps0l/foodgram_frontend
@@ -26,6 +27,7 @@ services:
       - ../frontend/:/app/result_build/
     depends_on:
       - db
+    container_name: foodgram_frontend
 
   nginx:
     image: nginx:1.19.3
@@ -39,6 +41,7 @@ services:
       - media_value:/var/html/media/recipes/
     depends_on:
       - backend
+    container_name: foodgram_nginx
 
 volumes:
   data_value:
