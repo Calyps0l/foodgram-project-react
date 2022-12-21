@@ -1,3 +1,5 @@
+![workflow](https://github.com/Calyps0l/foodgram-project-react/actions/workflows/main.yml/badge.svg)
+
 # Продуктовый помощник Foodgram
 ## Описание
 Foodgram - это сайт, позволяющий пользователям публиковать рецепты, добавлять чужие рецепты в избранное, подписываться 
