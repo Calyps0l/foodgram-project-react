@@ -1,7 +1,6 @@
 from django.db import transaction
 from drf_base64.fields import Base64ImageField
 from rest_framework import serializers
-
 from foodgram.models import (Favorite, Ingredient, IngredientInRecipe,
                              Recipe, ShoppingCart, Tag)
 from users.models import Subscribe, User
