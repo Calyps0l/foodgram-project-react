@@ -1,15 +1,14 @@
 from django.db.models import Sum
-from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
-from .utils import create_shopping_cart
-from foodgram.models import (Favorite, Ingredient, IngredientInRecipe,
-                             Recipe, ShoppingCart, Tag)
 from rest_framework import filters, serializers, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+
+from foodgram.models import (Favorite, Ingredient, IngredientInRecipe,
+                             Recipe, ShoppingCart, Tag)
 from users.models import Subscribe, User
 
 from .filters import IngredientFilter, RecipeFilter
@@ -19,6 +18,7 @@ from .serializers import (CustomUserSerializer, FavoriteSerializer,
                           IngredientSerializer, RecipeReadSerializer,
                           RecipeWriteSerializer, SubscribeSerializer,
                           TagSerializer)
+from .utils import create_shopping_cart
 
 
 class TagViewSet(viewsets.ModelViewSet):
@@ -145,7 +145,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             permission_classes=(IsAuthenticated,))
     def download_shopping_cart(self, request):
         ingredients = IngredientInRecipe.objects.filter(
-            recipes__shopping_cart_recipe__user=request.user
+            recipe__shopping_cart_recipe__user=request.user
         ).order_by('ingredient__name').values(
             'ingredient__name', 'ingredient__measurement_unit'
         ).annotate(ingredient_total=Sum('amount'))

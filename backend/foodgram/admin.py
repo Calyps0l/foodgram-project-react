@@ -4,6 +4,12 @@ from .models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
                      ShoppingCart, Tag)
 
 
+class IngredientInline(admin.TabularInline):
+    model = IngredientInRecipe
+    extra = 3
+    min_num = 1
+
+
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
     """
@@ -21,6 +27,7 @@ class RecipeAdmin(admin.ModelAdmin):
     Модель редактирования рецептов
     в зоне администратора.
     """
+    inlines = (IngredientInline, )
     list_display = ('name', 'author', 'add_favorites')
     readonly_fields = ('add_favorites',)
     list_filter = ('name', 'author', 'tags')
@@ -69,5 +76,5 @@ class IngredientInRecipeAdmin(admin.ModelAdmin):
     Модель редактирования ингредиентов
     в рецептах в зоне администратора.
     """
-    list_display = ('ingredient', 'amount',)
+    list_display = ('ingredient', 'amount')
     empty_value_display = '-пусто-'

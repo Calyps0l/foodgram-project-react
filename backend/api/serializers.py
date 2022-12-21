@@ -1,9 +1,9 @@
 from django.db import transaction
-from django.shortcuts import get_object_or_404
 from drf_base64.fields import Base64ImageField
-from foodgram.models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
-                             ShoppingCart, Tag)
 from rest_framework import serializers
+
+from foodgram.models import (Favorite, Ingredient, IngredientInRecipe,
+                             Recipe, ShoppingCart, Tag)
 from users.models import Subscribe, User
 
 
@@ -95,31 +95,27 @@ class IngredientInRecipeSerializer(serializers.ModelSerializer):
     """
     Сериализатор связи ингредиентов и рецептов.
     """
-    id = serializers.IntegerField()
-    name = serializers.SerializerMethodField()
-    measurement_unit = serializers.SerializerMethodField()
+    id = serializers.PrimaryKeyRelatedField(
+        queryset=Ingredient.objects.all())
+    name = serializers.ReadOnlyField(source='ingredient.name')
+    measurement_unit = serializers.ReadOnlyField(
+        source='ingredient.measurement_unit')
     amount = serializers.IntegerField(required=True)
 
     class Meta:
         model = IngredientInRecipe
         fields = ('id', 'name', 'measurement_unit', 'amount',)
 
-    def get_measurement_unit(self, ingredient):
-        measurement_unit = ingredient.ingredient.measurement_unit
-        return measurement_unit
-
-    def get_name(self, ingredient):
-        name = ingredient.ingredient.name
-        return name
-
 
 class RecipeReadSerializer(serializers.ModelSerializer):
     """
     Сериализатор просмотра рецептов.
     """
-    tags = TagSerializer(many=True, read_only=True)
-    author = CustomUserSerializer(read_only=True)
-    ingredients = IngredientInRecipeSerializer(many=True)
+    tags = TagSerializer(many=True, read_only=False)
+    author = CustomUserSerializer(many=False, read_only=True)
+    ingredients = IngredientInRecipeSerializer(
+        many=True,
+        source='ingredientrecipe')
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
 
@@ -199,13 +195,16 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         return data
 
     def create_ingredients(self, ingredients, recipe):
-        for ingredient in ingredients:
-            current = get_object_or_404(
-                Ingredient.objects.filter(id=ingredient['id'])[:1])
-            ing_recipe, _ = IngredientInRecipe.objects.get_or_create(
-                ingredient=current,
-                amount=ingredient['amount'], )
-            recipe.ingredients.add(ing_recipe.id)
+        list_ingredient = []
+        for ingredient_data in ingredients:
+            list_ingredient.append(
+                IngredientInRecipe(
+                    ingredient=ingredient_data.pop('id'),
+                    amount=ingredient_data.pop('amount'),
+                    recipe=recipe,
+                )
+            )
+        IngredientInRecipe.objects.bulk_create(list_ingredient)
 
     @transaction.atomic
     def create(self, validated_data):
