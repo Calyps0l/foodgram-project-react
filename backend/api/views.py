@@ -2,13 +2,12 @@ from django.db.models import Sum
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
+from foodgram.models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
+                             ShoppingCart, Tag)
 from rest_framework import filters, serializers, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-
-from foodgram.models import (Favorite, Ingredient, IngredientInRecipe,
-                             Recipe, ShoppingCart, Tag)
 from users.models import Subscribe, User
 
 from .filters import IngredientFilter, RecipeFilter
@@ -77,7 +76,8 @@ class CustomUserViewSet(UserViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         if request.method == 'DELETE':
-            if Subscribe.objects.filter(user=request.user, author=author).exists():
+            if Subscribe.objects.filter(user=request.user,
+                                        author=author).exists():
                 Subscribe.objects.filter(
                     user=request.user, author=author).delete()
             return Response(status=status.HTTP_204_NO_CONTENT)

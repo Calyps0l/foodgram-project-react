@@ -1,7 +1,6 @@
 import json
 
 from django.core.management import BaseCommand
-
 from foodgram.models import Ingredient
 
 
@@ -15,4 +14,5 @@ class Command(BaseCommand):
             data = json.loads(file.read())
             for ingredient in data:
                 Ingredient.objects.get_or_create(**ingredient)
-        self.stdout.write(self.style.SUCCESS('Загрузка ингредиентов завершена'))
+        self.stdout.write(self.style.SUCCESS(
+            'Загрузка ингредиентов завершена'))
