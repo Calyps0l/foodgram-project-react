@@ -7,10 +7,10 @@ services:
     volumes:
       - data_value:/var/lib/postgresql/data/
     env_file:
-      - ./.env
+      - .env
 
   backend:
-    build: ../backend
+    image: calyps0l/foodgram_backend
     restart: always
     volumes:
       - static_value:/app/static/
@@ -18,16 +18,14 @@ services:
     depends_on:
       - db
     env_file:
-      - ./.env
+      - .env
 
   frontend:
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
+    image: calyps0l/foodgram_frontend
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:
-      - backend
+      - db
 
   nginx:
     image: nginx:1.19.3
@@ -40,7 +38,7 @@ services:
       - static_value:/var/html/static/
       - media_value:/var/html/media/recipes/
     depends_on:
-      - frontend
+      - backend
 
 volumes:
   data_value:
