@@ -76,7 +76,7 @@ jobs:
             echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
             echo DB_HOST=${{ secrets.DB_HOST }} >> .env
             echo DB_PORT=${{ secrets.DB_PORT }} >> .env
-            echo DB_PORT=${{ secrets.SECRET_KEY }} >> .env
+            echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
             sudo docker-compose up -d --build
             sudo docker-compose exec backend python manage.py makemigrations
             sudo docker-compose exec backend python manage.py migrate
