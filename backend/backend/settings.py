@@ -6,8 +6,7 @@ load_dotenv()
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-SECRET_KEY = os.getenv('SECRET_KEY',
-                       default='asce%pq@05f4=#jc&e%+2g$!qe%z&0_&9f-nn@mpu&or(ksu4+')
+SECRET_KEY = os.getenv('SECRET_KEY', 'default')
 
 DEBUG = False
 
@@ -58,7 +57,6 @@ REST_FRAMEWORK = {
 DJOSER = {
     'HIDE_USERS': False,
     'LOGIN_FIELD': 'email',
-    'USER_ID_FIELD': 'id',
     'SERIALIZERS': {
         'user': 'api.serializers.CustomUserSerializer',
         'current_user': 'api.serializers.CustomUserSerializer',
