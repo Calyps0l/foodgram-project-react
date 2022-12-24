@@ -4,18 +4,42 @@
 ## Описание
 Foodgram - это сайт, позволяющий пользователям публиковать рецепты, добавлять чужие рецепты в избранное, подписываться 
 на публикации других авторов, а также скачивать список продуктов, необходимых для приготовления выбранных блюд.
-## Адрес сервера
-Проект доступен по адресу:
-```
-http://158.160.33.133
-```
-Данные от зоны администратора:
-```
-http://158.160.33.133/admin/login/
-email: admin@foodgram.ru
-password: 4321rewq
-```
+
 ## Запуск проекта (локально и с помощью Docker)
+### Запускаем проект через Docker
+Клонируем репозиторий
+```
+git clone git@github.com:Calyps0l/foodgram-project-react.git
+cd foodgram-project-react
+```
+Переходим в infra
+```
+cd infra
+```
+Собираем контейнеры
+```
+docker-compose up -d --build 
+```
+Выполняем миграции
+```
+docker-compose exec backend python manage.py makemigrations
+docker-compose exec backend python manage.py migrate 
+```
+Загружаем статику
+```
+docker-compose exec backend python manage.py collectstatic --noinput
+```
+Импортируем ингредиенты и тэги
+```
+docker-compose exec backend python manage.py load_ingr
+docker-compose exec backend python manage.py load_tag 
+```
+При необходимости создаем суперпользователя
+```
+docker-compose exec backend python manage.py createsuperuser  
+```
+После запуска контейнеров API документация будет доступна по адресу: http://localhost/api/docs/
+
 ### Запускаем проект локально
 Клонируем репозиторий
 ```
@@ -50,36 +74,10 @@ python manage.py createsuperuser
 ```
 python manage.py runserver    
 ```
-### Запускаем проект через Docker
-Клонируем репозиторий
-```
-git clone git@github.com:Calyps0l/foodgram-project-react.git
-cd foodgram-project-react
-```
-Переходим в infra
-```
-cd infra
-```
-Собираем контейнеры
-```
-docker-compose up -d --build 
-```
-Выполняем миграции
-```
-docker-compose exec backend python manage.py makemigrations
-docker-compose exec backend python manage.py migrate 
-```
-Загружаем статику
-```
-docker-compose exec backend python manage.py collectstatic --noinput
-```
-Импортируем ингредиенты и тэги
-```
-docker-compose exec backend python manage.py load_ingr
-docker-compose exec backend python manage.py load_tag 
-```
-При необходимости создаем суперпользователя
-```
-docker-compose exec backend python manage.py createsuperuser  
-```
-После запуска контейнеров API документация будет доступна по адресу: http://localhost/api/docs/
+### Шаблон наполнения env-файла (директория infra) ###
+**DB_ENGINE=django.db.backends.postgresql** - указываем, что работаем с postgresql.
+**DB_NAME=postgres** - имя базы данных.
+**POSTGRES_USER=postgres** - логин для подключения к базе данных.
+**POSTGRES_PASSWORD=postgres** - пароль для подключения к БД .
+**DB_HOST=db** - название сервиса (контейнера).
+**DB_PORT=5432** - порт для подключения к БД.
